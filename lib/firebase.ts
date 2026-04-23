@@ -2,12 +2,11 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, get, set, remove } from "firebase/database";
 
-// Konfigurasi Firebase Anda (sudah termasuk measurementId, tapi Realtime Database tidak memakainya)
-// lib/firebase.ts
+// Konfigurasi Firebase Anda
 const firebaseConfig = {
   apiKey: "AIzaSyCR0jLNN6oD3CUGC2gCCHrrfRXjnpqhG5k",
   authDomain: "corepanel-system.firebaseapp.com",
-  databaseURL: "https://corepanel-system-default-rtdb.asia-southeast1.firebasedatabase.app", // ← GANTI INI
+  databaseURL: "https://corepanel-system-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "corepanel-system",
   storageBucket: "corepanel-system.firebasestorage.app",
   messagingSenderId: "804027786624",
@@ -92,4 +91,8 @@ export const deleteBanner = async (id: string) => {
   await remove(ref(database, `banners/${id}`));
 };
 
+// ============ EKSPOR UNTUK KOMPATIBILITAS ============
 export { database };
+
+// TAMBAHKAN INI untuk kompatibilitas dengan file lama yang import db
+export { database as db };
