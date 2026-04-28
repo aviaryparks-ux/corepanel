@@ -17,16 +17,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-
-  // Ignore TypeScript errors during build (optional, untuk speed build)
-  // typescript: {
-  //   ignoreBuildErrors: true,
-  // },
-
-  // ESLint ignore during build untuk production
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 };
 
 export default nextConfig;
