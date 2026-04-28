@@ -1,0 +1,22 @@
+# robots.txt - DevSolution
+# https://devsolution.id/robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://devsolution.id/sitemap.xml
+
+# Crawl-delay (mengurangi beban server)
+Crawl-delay: 1
+
+# Allow AI bots untuk indexing (opsional)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Block AI bots yang tidak diinginkan
+User-agent: CCBot
+Disallow: /

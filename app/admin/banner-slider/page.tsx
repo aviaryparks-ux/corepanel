@@ -1,15 +1,15 @@
+// app/admin/banner-slider/page.tsx - SIMPLE
 "use client";
 import { useEffect, useState } from "react";
 
 interface Banner {
-  id: number;
+  id: string;
   title: string;
   subtitle: string;
   description: string;
   ctaText: string;
   ctaLink: string;
   image: string;
-  bgColor: string;
   active: boolean;
   order: number;
 }
@@ -21,35 +21,30 @@ export default function BannerSliderPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchBanners();
+    fetch('/api/banner-slider').then(r => r.json()).then(d => {
+      setBanners(d);
+      setLoading(false);
+    });
   }, []);
 
-  const fetchBanners = async () => {
-    const res = await fetch("/api/banner-slider");
-    const data = await res.json();
-    setBanners(data);
-    setLoading(false);
-  };
-
-  const handleDelete = async (id: number) => {
-    if (!confirm("Yakin hapus banner ini?")) return;
+  const handleDelete = async (id: string) => {
+    if (!confirm("Yakin hapus?")) return;
     await fetch(`/api/banner-slider?id=${id}`, { method: "DELETE" });
-    fetchBanners();
+    setBanners(prev => prev.filter(b => b.id !== id));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const fd = new FormData(e.currentTarget);
     const banner = {
-      title: formData.get("title"),
-      subtitle: formData.get("subtitle"),
-      description: formData.get("description"),
-      ctaText: formData.get("ctaText"),
-      ctaLink: formData.get("ctaLink"),
-      image: formData.get("image"),
-      bgColor: formData.get("bgColor"),
-      order: parseInt(formData.get("order") as string),
-      active: formData.get("active") === "on",
+      title: fd.get("title"),
+      subtitle: fd.get("subtitle"),
+      description: fd.get("description"),
+      ctaText: fd.get("ctaText"),
+      ctaLink: fd.get("ctaLink"),
+      image: fd.get("image"),
+      order: parseInt(fd.get("order") as string) || 1,
+      active: fd.get("active") === "on",
     };
 
     if (editing) {
@@ -66,105 +61,81 @@ export default function BannerSliderPage() {
       });
     }
 
+    const res = await fetch("/api/banner-slider");
+    setBanners(await res.json());
     setShowForm(false);
     setEditing(null);
-    fetchBanners();
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <div className="flex items-center justify-center h-48"><div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" /></div>;
+  }
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Banner Slider</h1>
-        <button
-          onClick={() => {
-            setEditing(null);
-            setShowForm(true);
-          }}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          + Tambah Banner
+        <div>
+          <h1 className="text-lg font-semibold text-gray-900">Banner Slider</h1>
+          <p className="text-sm text-gray-500">{banners.length} banner</p>
+        </div>
+        <button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
+          + Tambah
         </button>
       </div>
 
-      {/* List Banners */}
-      <div className="grid gap-4">
-        {banners.map((banner) => (
-          <div key={banner.id} className="bg-white rounded-lg shadow p-4 flex items-center gap-4">
-            <img src={banner.image} alt={banner.title} className="w-32 h-20 object-cover rounded" />
-            <div className="flex-1">
-              <h3 className="font-semibold">{banner.title}</h3>
-              <p className="text-sm text-gray-600">{banner.subtitle}</p>
-              <p className="text-xs text-gray-500">Order: {banner.order} | Status: {banner.active ? "✅ Aktif" : "❌ Nonaktif"}</p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setEditing(banner);
-                  setShowForm(true);
-                }}
-                className="bg-yellow-500 text-white px-3 py-1 rounded text-sm"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(banner.id)}
-                className="bg-red-500 text-white px-3 py-1 rounded text-sm"
-              >
-                Hapus
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+      {banners.length === 0 ? (
+        <div className="bg-white rounded border border-gray-200 p-8 text-center text-gray-500 text-sm">
+          Belum ada banner. <button onClick={() => setShowForm(true)} className="text-blue-600 hover:underline">Tambah baru</button>
+        </div>
+      ) : (
+        <div className="bg-white rounded border border-gray-200 overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">Gambar</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">Title</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">Status</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-600">Aksi</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {banners.map((b) => (
+                <tr key={b.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3"><img src={b.image} alt="" className="w-20 h-12 object-cover rounded" /></td>
+                  <td className="px-4 py-3"><div className="font-medium text-gray-800">{b.title}</div><div className="text-gray-500 text-xs">{b.subtitle}</div></td>
+                  <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded text-xs ${b.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>{b.active ? "Aktif" : "Nonaktif"}</span></td>
+                  <td className="px-4 py-3 text-right">
+                    <button onClick={() => { setEditing(b); setShowForm(true); }} className="text-blue-600 hover:underline mr-3">Edit</button>
+                    <button onClick={() => handleDelete(b.id)} className="text-red-600 hover:underline">Hapus</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Modal Form */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">{editing ? "Edit Banner" : "Tambah Banner Baru"}</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Title</label>
-                  <input name="title" defaultValue={editing?.title} className="w-full border rounded px-3 py-2" required />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Subtitle</label>
-                  <input name="subtitle" defaultValue={editing?.subtitle} className="w-full border rounded px-3 py-2" required />
-                </div>
-                <div className="mb-4 col-span-2">
-                  <label className="block text-sm font-medium mb-1">Description</label>
-                  <textarea name="description" defaultValue={editing?.description} rows={3} className="w-full border rounded px-3 py-2" required />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">CTA Text</label>
-                  <input name="ctaText" defaultValue={editing?.ctaText} className="w-full border rounded px-3 py-2" required />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">CTA Link</label>
-                  <input name="ctaLink" defaultValue={editing?.ctaLink} className="w-full border rounded px-3 py-2" required />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Image URL</label>
-                  <input name="image" defaultValue={editing?.image} className="w-full border rounded px-3 py-2" required />
-                  <p className="text-xs text-gray-500 mt-1">Masukkan URL gambar atau /images/nama-file.jpg</p>
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Order (urutan)</label>
-                  <input name="order" type="number" defaultValue={editing?.order || banners.length + 1} className="w-full border rounded px-3 py-2" required />
-                </div>
-                <div className="mb-4">
-                  <label className="flex items-center gap-2">
-                    <input name="active" type="checkbox" defaultChecked={editing?.active !== false} className="w-4 h-4" />
-                    <span className="text-sm font-medium">Aktif</span>
-                  </label>
-                </div>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={(e) => e.target === e.currentTarget && setShowForm(false)}>
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg">
+            <h2 className="text-lg font-semibold mb-4">{editing ? "Edit Banner" : "Banner Baru"}</h2>
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div><label className="text-sm text-gray-600">Title</label><input name="title" defaultValue={editing?.title} className="w-full border rounded px-3 py-2" required /></div>
+              <div><label className="text-sm text-gray-600">Subtitle</label><input name="subtitle" defaultValue={editing?.subtitle} className="w-full border rounded px-3 py-2" required /></div>
+              <div><label className="text-sm text-gray-600">Description</label><textarea name="description" defaultValue={editing?.description} rows={2} className="w-full border rounded px-3 py-2" required /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="text-sm text-gray-600">CTA Text</label><input name="ctaText" defaultValue={editing?.ctaText} className="w-full border rounded px-3 py-2" /></div>
+                <div><label className="text-sm text-gray-600">CTA Link</label><input name="ctaLink" defaultValue={editing?.ctaLink} className="w-full border rounded px-3 py-2" /></div>
               </div>
-              <div className="flex justify-end gap-2 mt-4">
-                <button type="button" onClick={() => setShowForm(false)} className="bg-gray-300 px-4 py-2 rounded">Batal</button>
-                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Simpan</button>
+              <div><label className="text-sm text-gray-600">Image URL</label><input name="image" defaultValue={editing?.image} className="w-full border rounded px-3 py-2" placeholder="https://..." required /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="text-sm text-gray-600">Order</label><input name="order" type="number" defaultValue={editing?.order || 1} className="w-full border rounded px-3 py-2" /></div>
+                <div className="flex items-center pt-5"><input name="active" type="checkbox" defaultChecked={editing?.active !== false} className="w-4 h-4 mr-2" /><span className="text-sm">Aktif</span></div>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button type="button" onClick={() => setShowForm(false)} className="bg-gray-200 px-4 py-2 rounded text-sm">Batal</button>
+                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded text-sm">Simpan</button>
               </div>
             </form>
           </div>

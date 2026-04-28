@@ -1,4 +1,4 @@
-// app/admin/components/DataTable.tsx
+// app/admin/components/DataTable.tsx - SIMPLE
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -11,7 +11,7 @@ interface DataTableProps {
 }
 
 export default function DataTable({ title, apiEndpoint, fields, createLink }: DataTableProps) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,56 +25,62 @@ export default function DataTable({ title, apiEndpoint, fields, createLink }: Da
     setLoading(false);
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Yakin hapus data ini?")) return;
-    await fetch(`${apiEndpoint}/${id}`, { method: "DELETE" });
+  const handleDelete = async (id: string) => {
+    if (!confirm("Yakin hapus?")) return;
+    await fetch(`${apiEndpoint}?id=${id}`, { method: "DELETE" });
     fetchData();
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-48">
+        <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div>
-      <div className="flex justify-between mb-4">
-        <h1 className="text-xl font-bold">{title}</h1>
-        <Link href={createLink} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          + Tambah Baru
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-base font-medium text-gray-800">{title}</h2>
+        <Link href={createLink} className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-700">
+          + Tambah
         </Link>
       </div>
 
-      <div className="bg-white rounded shadow overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              {fields.map((field) => (
-                <th key={field.key} className="p-3 text-left text-sm font-medium text-gray-700">
-                  {field.label}
-                </th>
-              ))}
-              <th className="p-3 text-left text-sm font-medium text-gray-700">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item: any) => (
-              <tr key={item.id} className="border-t hover:bg-gray-50">
-                {fields.map((field) => (
-                  <td key={field.key} className="p-3 text-sm">
-                    {item[field.key]}
-                  </td>
+      {/* Table */}
+      {data.length === 0 ? (
+        <div className="bg-white rounded border border-gray-200 p-8 text-center text-gray-500 text-sm">
+          Belum ada data
+        </div>
+      ) : (
+        <div className="bg-white rounded border border-gray-200 overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                {fields.map((f) => (
+                  <th key={f.key} className="text-left px-4 py-3 font-medium text-gray-600">{f.label}</th>
                 ))}
-                <td className="p-3">
-                  <Link href={`${createLink}/edit/${item.id}`} className="text-blue-600 mr-3 hover:text-blue-800">
-                    Edit
-                  </Link>
-                  <button onClick={() => handleDelete(item.id)} className="text-red-600 hover:text-red-800">
-                    Hapus
-                  </button>
-                </td>
+                <th className="text-right px-4 py-3 font-medium text-gray-600">Aksi</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {data.map((item) => (
+                <tr key={item.id} className="hover:bg-gray-50">
+                  {fields.map((f) => (
+                    <td key={f.key} className="px-4 py-3 text-gray-700">{item[f.key]}</td>
+                  ))}
+                  <td className="px-4 py-3 text-right">
+                    <Link href={`${createLink}/edit/${item.id}`} className="text-blue-600 hover:underline mr-3">Edit</Link>
+                    <button onClick={() => handleDelete(item.id)} className="text-red-600 hover:underline">Hapus</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
