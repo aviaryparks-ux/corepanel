@@ -1006,7 +1006,7 @@ export default function HomePage() {
                 a: "Tentu! Source code akan diberikan sepenuhnya setelah project lunas. Anda juga akan mendapatkan dokumentasi teknis untuk pengembangan lebih lanjut.",
               },
               {
-                q: "Apakah支持 bahasa Indonesia dan English?",
+                q: "Apakah bahasa Indonesia dan English?",
                 a: "Ya! Kami terbiasa bekerja dengan klien dari berbagai negara. Komunikasi bisa melalui WhatsApp, email, atau video call.",
               },
             ].map((faq, i) => (

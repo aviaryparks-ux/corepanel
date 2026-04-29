@@ -1,0 +1,219 @@
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0px);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-20px);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes pulse-float {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-8px) scale(1.05);
+    opacity: 0.85;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-float {
+  animation: float 2s ease-in-out infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.animate-pulse-float {
+  animation: pulse-float 2.5s ease-in-out infinite;
+}
+
+.animate-fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-fade-in {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+.animate-fade-in.visible {
+  opacity: 1;
+}
+
+/* Staggered children */
+.fade-up-group .animate-fade-up:nth-child(1) { transition-delay: 0.1s; }
+.fade-up-group .animate-fade-up:nth-child(2) { transition-delay: 0.2s; }
+.fade-up-group .animate-fade-up:nth-child(3) { transition-delay: 0.3s; }
+.fade-up-group .animate-fade-up:nth-child(4) { transition-delay: 0.4s; }
+.fade-up-group .animate-fade-up:nth-child(5) { transition-delay: 0.5s; }
+.fade-up-group .animate-fade-up:nth-child(6) { transition-delay: 0.6s; }
+
+/* =============================================
+   PARALLAX BACKGROUND
+   Usage:
+     <div class="parallax-container">
+       <div class="parallax-layer" data-speed="0.2" style="background-image: url(...)"></div>
+       <div class="parallax-layer" data-speed="0.5" style="background-color: #..."></div>
+       <div class="parallax-content">...</div>
+     </div>
+
+     JS:
+       const parallax = new ParallaxBackground();
+       parallax.init('.parallax-container');
+       window.addEventListener('scroll', () => parallax.update());
+   ============================================= */
+
+.parallax-container {
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.parallax-layer {
+  position: absolute;
+  inset: -50%;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+  z-index: 0;
+}
+
+.parallax-layer[data-speed="0.1"] { opacity: 0.3; }
+.parallax-layer[data-speed="0.2"] { opacity: 0.5; }
+.parallax-layer[data-speed="0.3"] { opacity: 0.7; }
+.parallax-layer[data-speed="0.5"] { opacity: 0.85; }
+.parallax-layer[data-speed="0.7"] { opacity: 0.95; }
+.parallax-layer[data-speed="1.0"] { opacity: 1; }
+
+.parallax-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* CSS-only parallax (modern browsers only) */
+.parallax-css {
+  perspective: 1px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.parallax-css .parallax-layer-css {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(-1px) scale(2);
+  z-index: -1;
+}
+
+/* =============================================
+   TEXT WORD BY WORD ANIMATION
+   Usage:
+     <h1 class="text-reveal">
+       <span class="word-wrapper"><span class="word">Hello</span></span>
+       <span class="word-wrapper"><span class="word">World</span></span>
+     </h1>
+
+     JS: wordReveal('.text-reveal'); // auto-split text into words
+   ============================================= */
+
+.text-reveal {
+  overflow: hidden;
+}
+
+.word-wrapper {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.word {
+  display: inline-block;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+}
+
+.word.revealed {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Alternative: fade up word by word */
+.word-fade-up .word-wrapper {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.word-fade-up .word {
+  display: inline-block;
+  transform: translateY(30px);
+  opacity: 0;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.word-fade-up .word.revealed {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Letter by letter variant */
+.letter-wrapper {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.letter {
+  display: inline-block;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.letter.revealed {
+  transform: translateY(0);
+  opacity: 1;
+}
+
