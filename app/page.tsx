@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Users, Download, Plus, Settings } from 'lucide-react'
+import { Users, Download, Plus, Settings } from '@/components/Icons'
 
 export default function HomePage() {
   return (
@@ -43,7 +43,7 @@ export default function HomePage() {
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Download className="text-green-600" size={32} />
               </div>
-              <h3 className="text-xl font-bold mb-2">PNG & PDF Export</h3>
+              <h3 className="text-xl font-bold mb-2">PNG and PDF Export</h3>
               <p className="text-gray-600">Download in multiple formats for printing or sharing</p>
             </div>
             <div className="text-center">
@@ -59,7 +59,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="py-6 text-center text-gray-500 text-sm">
-        Built with Next.js • Nametag System v1.0
+        Built with Next.js 14 | Nametag System v1.0
       </footer>
     </div>
   )

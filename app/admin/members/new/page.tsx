@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import PhotoUpload from '@/components/PhotoUpload'
 import NametagCard from '@/components/NametagCard'
-import { ArrowLeft, Save } from 'lucide-react'
+import { ArrowLeft, Save } from '@/components/Icons'
 
 export default function AddMemberPage() {
   const router = useRouter()
@@ -56,7 +56,9 @@ export default function AddMemberPage() {
               </div>
             </div>
             <div className="flex gap-3">
-              <button onClick={() => setPreview(false)} className="btn-secondary flex-1">Edit</button>
+              <button onClick={() => setPreview(false)} className="btn-secondary flex-1">
+                Edit
+              </button>
               <button onClick={handleSubmit} disabled={saving} className="btn-primary flex-1">
                 {saving ? 'Saving...' : 'Save Member'}
               </button>

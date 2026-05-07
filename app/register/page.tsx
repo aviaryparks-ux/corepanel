@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import PhotoUpload from '@/components/PhotoUpload'
 import NametagCard from '@/components/NametagCard'
-import { ArrowRight, CheckCircle } from 'lucide-react'
+import { ArrowRight, CheckCircle } from '@/components/Icons'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -21,7 +21,6 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.name || !form.email) return
-    
     setStep('preview')
   }
 
@@ -142,8 +141,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="card w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Staff Registration</h1>
-        
+        <h1 className="text-2xl font-bold text-center mb-6">Staff Registration</h1>        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">Photo</label>

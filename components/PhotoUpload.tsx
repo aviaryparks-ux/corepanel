@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Upload, X } from 'lucide-react'
+import { Upload, X } from '@/components/Icons'
 
 interface PhotoUploadProps {
   value: string

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Member } from '@/lib/db'
-import { Plus, Download, Search, Edit, Trash2, Eye } from 'lucide-react'
+import { Plus, Download, Search, Edit, Trash2, Eye } from '@/components/Icons'
 
 export default function MembersPage() {
   const [members, setMembers] = useState<Member[]>([])
