@@ -5,9 +5,12 @@ export interface Member {
   id: string
   name: string
   email: string
+  phone: string
   address: string
   photo: string // base64
-  createdAt: string
+  memberId: string // formatted member ID like "MR-001"
+  discount: number // discount percentage
+  joinDate: string
   updatedAt: string
 }
 
@@ -37,14 +40,27 @@ export async function getMember(id: string): Promise<Member | null> {
   return members.find(m => m.id === id) || null
 }
 
-export async function addMember(member: Omit<Member, 'id' | 'createdAt' | 'updatedAt'>): Promise<Member> {
+export async function getMemberByMemberId(memberId: string): Promise<Member | null> {
   const members = await getMembers()
+  return members.find(m => m.memberId === memberId) || null
+}
+
+function generateMemberId(members: Member[]): string {
+  const num = members.length + 1
+  return `MR-${num.toString().padStart(4, '0')}`
+}
+
+export async function addMember(member: Omit<Member, 'id' | 'memberId' | 'joinDate' | 'updatedAt'>): Promise<Member> {
+  const members = await getMembers()
+  
   const newMember: Member = {
     ...member,
     id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-    createdAt: new Date().toISOString(),
+    memberId: generateMemberId(members),
+    joinDate: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   }
+  
   members.push(newMember)
   await ensureDataDir()
   await fs.writeFile(DATA_FILE, JSON.stringify(members, null, 2))
@@ -74,7 +90,15 @@ export async function deleteMember(id: string): Promise<boolean> {
 }
 
 export function toCSV(members: Member[]): string {
-  const headers = ['ID', 'Name', 'Email', 'Address', 'Created At']
-  const rows = members.map(m => [m.id, m.name, m.email, m.address, m.createdAt])
+  const headers = ['Member ID', 'Name', 'Email', 'Phone', 'Address', 'Discount %', 'Join Date']
+  const rows = members.map(m => [
+    m.memberId,
+    m.name,
+    m.email,
+    m.phone,
+    m.address,
+    m.discount.toString(),
+    m.joinDate
+  ])
   return [headers.join(','), ...rows.map(r => r.map(v => `"${v}"`).join(','))].join('\n')
 }
